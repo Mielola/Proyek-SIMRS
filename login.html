@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal - PUSKESMAS SEHAT SELALU</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* --- Reset & Font Dasar --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html { height: 100%; font-family: 'Poppins', sans-serif; overflow: hidden; }
+
+        /* --- Latar Belakang Full-Screen --- */
+        .login-background {
+            height: 100%; display: flex; justify-content: center; align-items: center;
+            padding: 20px;
+            background-image: url('https://source.unsplash.com/random/1920x1080/?hospital,medical,modern');
+            background-size: cover; background-position: center; position: relative;
+        }
+        .login-background::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); z-index: 1;
+        }
+
+        /* =====================================
+         == PERUBAHAN CSS ==
+         =====================================
+         ".login-container" diubah menjadi ".auth-container"
+         agar bisa dipakai oleh 3 box (Login, Lupa, Daftar)
+        */
+        .auth-container {
+            position: relative; z-index: 2; width: 100%; max-width: 450px;
+            padding: 2.5rem; background: #ffffff; border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1); 
+            text-align: center; color: #333;
+        }
+        
+        /* =====================================
+         == CSS BARU (UNTUK MENYEMBUNYIKAN) ==
+         =====================================
+        */
+        #forgot-box, #register-box {
+            display: none; /* Sembunyikan box Lupa & Daftar by default */
+        }
+        /* ================================== */
+
+
+        /* --- Logo & Header --- */
+        .logo-icon { font-size: 3.5rem; color: #0d47a1; margin-bottom: 1rem; }
+        h2 { font-weight: 600; font-size: 1.8rem; margin-bottom: 5px; color: #222; }
+        .auth-container p { font-size: 0.9rem; color: #555; margin-bottom: 2rem; }
+
+        /* --- Grup Input --- */
+        .input-group { margin-bottom: 1.25rem; text-align: left; }
+        .input-group label {
+            display: block; margin-bottom: 8px; font-weight: 500;
+            font-size: 0.9rem; color: #333;
+        }
+        .input-group input, .input-group select {
+            width: 100%; padding: 14px 16px; font-size: 0.9rem;
+            font-family: 'Poppins', sans-serif; background: #f4f7f6;
+            border: 1px solid #ddd; border-radius: 10px; color: #333;
+            transition: border-color 0.3s ease;
+        }
+        .input-group input::placeholder { color: #999; }
+        .input-group select {
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat; background-position: right 1rem center;
+            background-size: .65em auto; -webkit-appearance: none;
+            -moz-appearance: none; appearance: none;
+        }
+        .input-group select option { background: #ffffff; color: #333; }
+        .input-group input:focus, .input-group select:focus {
+            background: #ffffff; border-color: #0d47a1; outline: none; 
+        }
+
+        /* --- Opsi 'Ingat Saya' & 'Lupa Password' --- */
+        .options-group {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.5rem; font-size: 0.9rem;
+        }
+        .remember-me { display: flex; align-items: center; color: #555; }
+        .remember-me input[type="checkbox"] {
+            margin-right: 8px; width: 16px; height: 16px; accent-color: #0d47a1;
+        }
+        .forgot-password { color: #0d47a1; text-decoration: none; font-weight: 500; }
+        .forgot-password:hover { text-decoration: underline; }
+        
+        /* --- Link 'Daftar' & 'Kembali ke Login' --- */
+        .bottom-link {
+            margin-top: 1.5rem; font-size: 0.9rem; color: #555;
+        }
+        .bottom-link a {
+            color: #0d47a1; font-weight: 600; text-decoration: none; cursor: pointer;
+        }
+        .bottom-link a:hover { text-decoration: underline; }
+        .footer-text { font-size: 0.8rem; color: #888; margin-top: 1rem; }
+        
+        /* --- Tombol Login --- */
+        .btn {
+            width: 100%; padding: 14px; border: none; border-radius: 10px;
+            background: linear-gradient(90deg, #1e88e5, #0d47a1);
+            color: white; font-size: 1rem; font-weight: 600;
+            font-family: 'Poppins', sans-serif; cursor: pointer;
+            transition: all 0.3s ease; margin-top: 0.5rem;
+        }
+        .btn:hover {
+            opacity: 0.9; box-shadow: 0 4px 15px rgba(29, 133, 228, 0.4);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-background">
+        
+        <div class="auth-container" id="login-box">
+            <form id="login-form">
+                <div class="logo-icon"> <i class="fa-solid fa-hospital-user"></i> </div>
+                <h2>PUSKESMAS SEHAT SELALU</h2> 
+                <p>Sistem Informasi Manajemen Puskesmas</p> 
+                
+                <div class="input-group">
+                    <label for="login-role">Pilih Peran Pengguna</label>
+                    <select id="login-role" name="role">
+                        <option value="" disabled selected>Pilih Role</option>
+                        <option value="admin">Admin</option>
+                        <option value="dokter">Dokter</option>
+                        <option value="perawat">Perawat</option>
+                        <option value="apoteker">Apoteker</option>
+                        <option value="simpus">Tim SIMPUS</option>
+                        <option value="pendaftaran">Petugas Pendaftaran</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password" placeholder="Masukkan Password" required>
+                </div>
+                
+                <div class="options-group">
+                    <label class="remember-me">
+                        <input type="checkbox" name="remember"> Ingat Saya
+                    </label>
+                    <a href="#" class="forgot-password" id="show-forgot-link">Lupa Password?</a>
+                </div>
+                
+                <button type="submit" class="btn">Login</button>
+                
+                <div class="bottom-link">
+                    <p>Belum punya akun? <a id="show-register-link">Daftar di sini</a></p>
+                    <div class="footer-text"> <p>&copy; 2025 Puskesmas Sehat Selalu</p> </div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="auth-container" id="forgot-box">
+            <form id="forgot-form">
+                <div class="logo-icon"> <i class="fa-solid fa-key"></i> </div>
+                <h2>Lupa Password</h2> 
+                <p>Masukkan email Anda, kami akan kirim link reset.</p> 
+                
+                <div class="input-group">
+                    <label for="forgot-email">Email Terdaftar</label>
+                    <input type="email" id="forgot-email" name="email" placeholder="contoh@email.com" required>
+                </div>
+                
+                <button type="submit" class="btn">Kirim Link Reset</button>
+                
+                <div class="bottom-link">
+                    <p><a class="back-to-login">Kembali ke Login</a></p>
+                </div>
+            </form>
+        </div>
+        
+        <div class="auth-container" id="register-box">
+            <form id="register-form">
+                <div class="logo-icon"> <i class="fa-solid fa-user-plus"></i> </div>
+                <h2>Daftar Akun Baru</h2> 
+                <p>Buat akun baru untuk masuk ke sistem.</p> 
+                
+                <div class="input-group">
+                    <label for="register-name">Nama Lengkap</label>
+                    <input type="text" id="register-name" name="name" placeholder="Masukkan nama Anda" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" name="email" placeholder="Masukkan email aktif" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="register-role">Pilih Peran</label>
+                    <select id="register-role" name="role" required>
+                        <option value="" disabled selected>Daftar sebagai...</option>
+                        <option value="dokter">Dokter</option>
+                        <option value="perawat">Perawat</option>
+                        <option value="apoteker">Apoteker</option>
+                        </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="register-password">Password Baru</label>
+                    <input type="password" id="register-password" name="password" placeholder="Buat password" required>
+                </div>
+                
+                <button type="submit" class="btn">Daftar</button>
+                
+                <div class="bottom-link">
+                    <p>Sudah punya akun? <a class="back-to-login">Login di sini</a></p>
+                </div>
+            </form>
+        </div>
+        
+    </div> <script>
+        
+        // --- BAGIAN 1: LOGIKA UNTUK SUBMIT/KIRIM FORM ---
+        
+        // Form Login (Kode lama Anda, sedikit disesuaikan)
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+            var password = document.getElementById('login-password').value;
+            var role = document.getElementById('login-role').value;
+            
+            if (role === "") {
+                alert('Silakan pilih peran Anda!');
+                return;
+            }
+            if (password === '123') {
+                // Tampilkan loader sederhana (opsional)
+                document.body.innerHTML += '<div id="page-loader" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index:9998; display:flex; justify-content:center; align-items:center;"><div class="spinner" style="width:50px; height:50px; border:5px solid #f0f4f8; border-top:5px solid #0d47a1; border-radius:50%; animation:spin 1s linear infinite;"></div></div>';
+                
+                // Pindah halaman
+                switch (role) {
+                    case 'admin': window.location.href = 'dashboard-admin.html'; break;
+                    case 'dokter': window.location.href = 'dashboard-dokter.html'; break;
+                    case 'perawat': window.location.href = 'dashboard-perawat.html'; break;
+                    case 'apoteker': window.location.href = 'dashboard-apoteker.html'; break;
+                    case 'simpus': window.location.href = 'dashboard-simpus.html'; break;
+                    case 'pendaftaran': window.location.href = 'dashboard-pendaftaran.html'; break;
+                }
+            } else {
+                alert('Password salah!');
+            }
+        });
+
+        // Form Lupa Password (Simulasi)
+        document.getElementById('forgot-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var email = document.getElementById('forgot-email').value;
+            alert('Link reset password telah dikirim ke ' + email + '. Silakan cek email Anda.');
+            // Kembalikan ke halaman login
+            document.getElementById('forgot-box').style.display = 'none';
+            document.getElementById('login-box').style.display = 'block';
+        });
+
+        // Form Daftar (Simulasi)
+        document.getElementById('register-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var name = document.getElementById('register-name').value;
+            alert('Pendaftaran untuk ' + name + ' berhasil! Akun Anda akan diverifikasi oleh Admin. Silakan hubungi Admin untuk aktivasi.');
+            // Kembalikan ke halaman login
+            document.getElementById('register-box').style.display = 'none';
+            document.getElementById('login-box').style.display = 'block';
+        });
+        
+
+        // --- BAGIAN 2: LOGIKA UNTUK PINDAH TAMPILAN (SHOW/HIDE) ---
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ambil semua box
+            const loginBox = document.getElementById('login-box');
+            const forgotBox = document.getElementById('forgot-box');
+            const registerBox = document.getElementById('register-box');
+
+            // Ambil semua link pemicu
+            const showForgotLink = document.getElementById('show-forgot-link');
+            const showRegisterLink = document.getElementById('show-register-link');
+            const backToLoginLinks = document.querySelectorAll('.back-to-login');
+
+            // Fungsi untuk pindah tampilan
+            function showView(viewToShow) {
+                loginBox.style.display = 'none';
+                forgotBox.style.display = 'none';
+                registerBox.style.display = 'none';
+                viewToShow.style.display = 'block';
+            }
+
+            // Pasang pendengar klik
+            showForgotLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showView(forgotBox);
+            });
+
+            showRegisterLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showView(registerBox);
+            });
+
+            backToLoginLinks.forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showView(loginBox);
+                });
+            });
+        });
+        
+    </script>
+</body>
+</html>

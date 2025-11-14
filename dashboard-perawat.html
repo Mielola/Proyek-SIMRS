@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Perawat - SIMPUS Sehat Selalu</title>
+    
+    <style>
+        /* === LOADER CSS === */
+        #page-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #ffffff; z-index: 9999; display: flex;
+            justify-content: center; align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid #f0f4f8;
+            border-top: 5px solid #0d47a1; border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* === END LOADER CSS === */
+
+        /* --- CSS DASAR --- */
+        body, html { margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f7f6; height: 100%; }
+        .app-container { display: flex; height: 100vh; }
+        .sidebar { width: 260px; background-color: #ffffff; border-right: 1px solid #e0e0e0; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid #e0e0e0; }
+        .sidebar-header h2 { margin: 0; color: #0d47a1; font-size: 1.4rem; }
+        .sidebar-nav { flex-grow: 1; list-style: none; padding: 20px 0; margin: 0; }
+        .sidebar-nav li a { display: block; padding: 12px 20px; margin: 4px 10px; text-decoration: none; color: #333; font-weight: bold; border-radius: 8px; transition: background-color 0.3s; cursor: pointer; }
+        .sidebar-nav li a.active, .sidebar-nav li a:hover { background-color: #e3f2fd; color: #0d47a1; }
+        
+        /* --- CSS KONTEN --- */
+        .main-content { flex-grow: 1; padding: 30px; overflow-y: auto; }
+        .content-header { margin-bottom: 20px; }
+        .content-header h1 { margin: 0; color: #333; }
+        .content-header p { color: #777; font-size: 1.1rem; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        .widget-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .widget { background-color: #ffffff; border-radius: 10px; padding: 20px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
+        .widget h3 { margin-top: 0; color: #0d47a1; }
+        .widget-value { font-size: 2.5rem; font-weight: bold; color: #333; }
+        .content-block { background-color: #ffffff; border-radius: 10px; padding: 25px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
+        .content-block h2 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .btn { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.9rem; margin-right: 5px; }
+        .btn-primary { background-color: #1565c0; color: white; }
+        .btn-primary:hover { background-color: #0d47a1; }
+        .btn-warning { background-color: #ffb300; color: white; } /* Tombol Kuning */
+
+        /* --- CSS TABEL DATA --- */
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .data-table th, .data-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        .data-table th { background-color: #f9f9f9; }
+        .status-waiting { color: #f57c00; font-weight: bold; } /* Oranye */
+        .status-done { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div id="page-loader"> <div class="spinner"></div> </div>
+
+    <div class="app-container">
+        
+        <nav class="sidebar">
+            <div class="sidebar-header"> <h2>SIM-PUSKESMAS</h2> </div>
+            <ul class="sidebar-nav">
+                <li><a class="sidebar-link active" data-target="dashboard">Dashboard</a></li>
+                <li><a class="sidebar-link" data-target="pasien-poli">Pasien Poli (Triage)</a></li>
+                <li><a class="sidebar-link" data-target="pasien-rawat-inap">Pasien Rawat Inap</a></li>
+                <li><a class="sidebar-link" data-target="pasien-rujukan">Pasien Rujukan</a></li> <li><a class="sidebar-link" data-target="jadwal-jaga">Jadwal Jaga</a></li>
+                <li><a href="login.html">Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            
+            <div id="dashboard" class="content-section active">
+                <header class="content-header">
+                    <h1>Dashboard Perawat</h1>
+                    <p>Selamat datang, Perawat. Kelola pasien poli dan rawat inap.</p>
+                </header>
+                <div class="widget-container">
+                    <div class="widget">
+                        <h3>Antrian Pasien Triage</h3>
+                        <div class="widget-value">5</div> </div>
+                    <div class="widget">
+                        <h3>Total Pasien Rawat Inap</h3>
+                        <div class="widget-value">7</div> </div>
+                    <div class="widget">
+                        <h3>Pasien Rujukan (Pending)</h3>
+                        <div class="widget-value">7</div> </div>
+                </div>
+            </div>
+
+            <div id="pasien-poli" class="content-section">
+                <header class="content-header">
+                    <h1>Pasien Poli (Triage)</h1>
+                    <p>Daftar pasien dari pendaftaran yang menunggu pemeriksaan tanda vital.</p>
+                </header>
+                <div class="content-block">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>No. Antrian</th>
+                                <th>Nama Pasien</th>
+                                <th>Poli Tujuan</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr> <td>A-015</td> <td>Bapak Budi</td> <td>Poli Umum</td> <td><span class="status-waiting">Menunggu Triage</span></td> <td><button class="btn btn-primary">Panggil & Ambil Tanda Vital</button></td> </tr>
+                            <tr> <td>A-016</td> <td>Ibu Siti</td> <td>Poli Umum</td> <td><span class="status-waiting">Menunggu Triage</span></td> <td><button class="btn btn-primary">Panggil & Ambil Tanda Vital</button></td> </tr>
+                            <tr> <td>A-017</td> <td>Anak Rian</td> <td>Poli Umum</td> <td><span class="status-waiting">Menunggu Triage</span></td> <td><button class="btn btn-primary">Panggil & Ambil Tanda Vital</button></td> </tr>
+                            <tr> <td>A-018</td> <td>Bapak Joko</td> <td>Poli Umum</td> <td><span class="status-waiting">Menunggu Triage</span></td> <td><button class="btn btn-primary">Panggil & Ambil Tanda Vital</button></td> </tr>
+                            <tr> <td>A-019</td> <td>Ibu Winda</td> <td>Poli Umum</td> <td><span class="status-waiting">Menunggu Triage</span></td> <td><button class="btn btn-primary">Panggil & Ambil Tanda Vital</button></td> </tr>
+                            <tr> <td>A-014</td> <td>Bapak Agus</td> <td>Poli Umum</td> <td><span class="status-done">Selesai Triage</span></td> <td><button class="btn">Lihat Detail</button></td> </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="pasien-rawat-inap" class="content-section">
+                <header class="content-header">
+                    <h1>Manajemen Pasien Rawat Inap</h1>
+                    <p>Daftar semua pasien yang sedang dirawat.</p>
+                </header>
+                <div class="content-block">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Kamar / Bed</th>
+                                <th>No. RM</th>
+                                <th>Nama Pasien</th>
+                                <th>Dokter PJ</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr> <td>Mawar / 01A</td> <td>00-12-50</td> <td>Ibu Wati</td> <td>dr. M. Rasyiddasani</td> <td><button class="btn btn-warning">Input Catatan Perawat</button></td> </tr>
+                            <tr> <td>Mawar / 01B</td> <td>00-14-10</td> <td>Anak Sinta</td> <td>dr. M. Rasyiddasani</td> <td><button class="btn btn-warning">Input Catatan Perawat</button></td> </tr>
+                            <tr> <td>Melati / 01A</td> <td>00-15-11</td> <td>Bapak Dedi</td> <td>dr. M. Rasyiddasani</td> <td><button class="btn btn-warning">Input Catatan Perawat</button></td> </tr>
+                            <tr> <td>Melati / 02A</td> <td>00-15-12</td> <td>Ibu Kania</td> <td>dr. Firhan</td> <td><button class="btn btn-warning">Input Catatan Perawat</button></td> </tr>
+                            <tr> <td>Mawar / 02A</td> <td>00-15-13</td> <td>Bapak Tono</td> <td>dr. Firhan</td> <td><button class="btn btn-warning">Input Catatan Perawat</button></td> </tr>
+                            <tr> <td>Mawar / 02B</td> <td>00-15-14</td> <td>Ibu Lina</td> <td>dr. M. Rasyiddasani</td> <td><button class="btn btn-warning">Input Catatan Perawat</button></td> </tr>
+                            <tr> <td>Melati / 02B</td> <td>00-15-15</td> <td>Bapak Heru</td> <td>dr. Firhan</td> <td><button class="btn btn-warning">Input Catatan Perawat</button></td> </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="pasien-rujukan" class="content-section">
+                <header class="content-header">
+                    <h1>Pasien Rujukan</h1>
+                    <p>Daftar pasien yang perlu disiapkan untuk rujukan.</p>
+                </header>
+                <div class="content-block">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>No. RM</th>
+                                <th>Nama Pasien</th>
+                                <th>Faskes Tujuan</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr> <td>00-16-01</td> <td>Bapak Iwan</td> <td>RSUD Cibinong</td> <td><span class="status-waiting">Menunggu Berkas</span></td> <td><button class="btn btn-primary">Siapkan Berkas</button></td> </tr>
+                            <tr> <td>00-16-02</td> <td>Ibu Sari</td> <td>RS Mata Cicendo</td> <td><span class="status-waiting">Menunggu Berkas</span></td> <td><button class="btn btn-primary">Siapkan Berkas</button></td> </tr>
+                            <tr> <td>00-16-03</td> <td>Anak Bima</td> <td>RS Harapan Kita</td> <td><span class="status-waiting">Menunggu Berkas</span></td> <td><button class="btn btn-primary">Siapkan Berkas</button></td> </tr>
+                            <tr> <td>00-16-04</td> <td>Bapak Asep</td> <td>RS Pusat Otak Nasional</td> <td><span class="status-done">Terkirim</span></td> <td><button class="btn">Lihat Detail</button></td> </tr>
+                            <tr> <td>00-16-05</td> <td>Ibu Nani</td> <td>RS Kanker Dharmais</td> <td><span class="status-waiting">Menunggu Berkas</span></td> <td><button class="btn btn-primary">Siapkan Berkas</button></td> </tr>
+                            <tr> <td>00-16-06</td> <td>Bapak Dimas</td> <td>RS Jantung Harapan Kita</td> <td><span class="status-done">Terkirim</span></td> <td><button class="btn">Lihat Detail</button></td> </tr>
+                            <tr> <td>00-16-07</td> <td>Ibu Fira</td> <td>RSUPN Cipto Mangunkusumo</td> <td><span class="status-waiting">Menunggu Berkas</span></td> <td><button class="btn btn-primary">Siapkan Berkas</button></td> </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="jadwal-jaga" class="content-section">
+                <header class="content-header">
+                    <h1>Jadwal Jaga</h1>
+                    <p>Jadwal dinas perawat.</p>
+                </header>
+                <div class="content-block">
+                    <h2>Jadwal Minggu Ini</h2>
+                    <ul>
+                        <li>Senin, 10 Nov: Shift Pagi (07:00 - 14:00)</li>
+                        <li>Selasa, 11 Nov: Shift Siang (14:00 - 21:00)</li>
+                        <li>Rabu, 12 Nov: Shift Pagi (07:00 - 14:00)</li>
+                        <li>Kamis, 13 Nov: Shift Malam (21:00 - 07:00)</li>
+                    </ul>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // --- KODE 1: LOADER ---
+        try {
+            window.addEventListener('load', function() {
+                const loader = document.getElementById('page-loader');
+                if (loader) {
+                    loader.style.opacity = '0';
+                    setTimeout(function() { loader.style.display = 'none'; }, 500);
+                }
+            });
+        } catch (e) {
+            console.error('Error pada Page Loader:', e);
+        }
+        
+        // --- KODE 2: FUNGSI SIDEBAR (STABIL) ---
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                const sidebarLinks = document.querySelectorAll('.sidebar-nav a.sidebar-link');
+                const contentSections = document.querySelectorAll('.main-content .content-section');
+
+                if (sidebarLinks.length > 0 && contentSections.length > 0) {
+                    
+                    sidebarLinks.forEach(function(link) {
+                        link.addEventListener('click', function(event) {
+                            event.preventDefault(); 
+                            
+                            const targetId = link.getAttribute('data-target');
+                            if (!targetId) return;
+
+                            contentSections.forEach(function(section) {
+                                section.classList.remove('active');
+                            });
+                            
+                            sidebarLinks.forEach(function(l) {
+                                l.classList.remove('active');
+                            });
+
+                            const targetContent = document.getElementById(targetId);
+                            if (targetContent) {
+                                targetContent.classList.add('active');
+                            } else {
+                                console.error('Target konten tidak ditemukan:', targetId); 
+                            }
+                            
+                            link.classList.add('active');
+                        });
+                    });
+                    
+                } else {
+                    console.error('Elemen sidebar atau konten tidak ditemukan.');
+                }
+            } catch (e) {
+                console.error('Error pada Logika Sidebar:', e);
+            }
+        });
+    </script>
+
+</body>
+</html>
